@@ -1,3 +1,4 @@
+```shell
 systemctl stop mysqld
 systemctl set-environment MYSQLD_OPTS="--skip-grant-tables"
 systemctl start mysqld
@@ -9,3 +10,4 @@ mysql> flush privileges;
 mysql> exit
 
 systemctl restart mysqld
+```
