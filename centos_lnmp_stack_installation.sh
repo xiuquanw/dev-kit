@@ -64,7 +64,7 @@ echo "root_pass: "$root_pass | tee ${workspace}/root_pass.txt
 # generate mysql_secure_installation.sql
 cat > mysql_secure_installation.sql << EOF
 # Make sure that NOBODY can access the server without a password
-SET PASSWORD = PASSWORD('YourROOTPassword#6kyPBX');
+SET PASSWORD = PASSWORD('${root_pass}');
 # Kill the anonymous users
 DELETE FROM mysql.user WHERE User='';
 # disallow remote login for root
