@@ -9,5 +9,6 @@ mysql> update user set authentication_string=password('your new pass') where use
 mysql> flush privileges; 
 mysql> exit
 
+systemctl set-environment MYSQLD_OPTS=""
 systemctl restart mysqld
 ```

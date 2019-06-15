@@ -10,7 +10,7 @@ clear
 printf "
 #######################################################################
 #       Initialize nginx/mysql/php environment on CentOS        #
-#       Find out more at https://aiden.dev                            #
+#       Find out more at https://aiden.dev                      #
 #######################################################################
 "
 # Check if user is root
@@ -18,6 +18,10 @@ printf "
 
 # Reset BASH time counter
 SECONDS=0
+
+# workspace
+workspace=$(pwd)
+echo "Workspace:${workspace}"
 
 # print OS info
 cat /etc/*elease
@@ -30,6 +34,7 @@ sed -i 's/^SELINUX=.*$/SELINUX=disabled/' /etc/selinux/config
 # Set timezone
 echo "Set timezone"
 export timezone=Australia/Adelaide
+echo "timezone:${timezone}"
 ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
 date
 
@@ -49,6 +54,12 @@ service mysqld start
 root_temp_pass=$(grep 'A temporary password' /var/log/mysqld.log |tail -1 |awk '{split($0,a,": "); print a[2]}')
 
 echo "root_temp_pass: "$root_temp_pass
+
+# root pass 
+root_pass=$(</dev/urandom tr -dc 'A-Za-z0-9!#$%()=@' | head -c 16  ; echo
+)"#"
+
+echo "root_pass: "$root_pass | tee ${workspace}/root_pass.txt
 
 # generate mysql_secure_installation.sql
 cat > mysql_secure_installation.sql << EOF
@@ -468,8 +479,9 @@ php -i | grep php.ini
 # check config
 egrep "date.timezone|memory_limit|upload_max_filesize|post_max_size|max_execution_time|max_input_time" /etc/php.ini
 
+time_zone_escape=$(echo $timezone | sed 's/\//\\\//g')
 # update values
-sed -i.bak 's/^;date.timezone =.*/date.timezone = "Australia\/Adelaide"/' /etc/php.ini
+sed -i.bak "s/^;date.timezone =.*/date.timezone = \"${time_zone_escape}\"/" /etc/php.ini
 sed -i.bak '/^ *memory_limit/s/=.*/= 128M/' /etc/php.ini
 sed -i.bak '/^ *upload_max_filesize/s/=.*/= 32M/' /etc/php.ini
 sed -i.bak '/^ *post_max_size/s/=.*/= 32M/' /etc/php.ini
