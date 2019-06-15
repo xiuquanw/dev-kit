@@ -39,7 +39,7 @@ ln -sf /usr/share/zoneinfo/${timezone} /etc/localtime
 date
 
 echo "Update OS"
-yum -y update && yum install -y epel-release
+yum -y update && yum install -y epel-release zip unzip
 
 # Install mysql 5.7
 echo "Install mysql 5.7"
